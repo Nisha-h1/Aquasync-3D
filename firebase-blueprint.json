@@ -1,0 +1,155 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role-based access control for One Health intelligence platform",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["admin", "health_authority", "hospital", "water_authority", "researcher"] },
+        "organization": { "type": "string", "maxLength": 256 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Region": {
+      "title": "Region",
+      "description": "Monitored geographic region with synthetic environmental and health parameters",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 128 },
+        "country": { "type": "string", "maxLength": 64 },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "population": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "monitored", "resolved", "warning"] },
+        "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+        "waterSource": { "type": "string", "maxLength": 128 },
+        "lastUpdated": { "type": "string" }
+      },
+      "required": ["id", "name", "country", "latitude", "longitude", "severity"]
+    },
+    "Outbreak": {
+      "title": "Outbreak",
+      "description": "Synthetic demonstration water-health outbreak scenario",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "regionId": { "type": "string", "maxLength": 64 },
+        "waterSource": { "type": "string", "maxLength": 128 },
+        "contaminationType": { "type": "string", "maxLength": 128 },
+        "contaminationLevel": { "type": "string", "maxLength": 64 },
+        "patientCount": { "type": "number" },
+        "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+        "detectedDate": { "type": "string" },
+        "outbreakStartDate": { "type": "string" },
+        "correlationScore": { "type": "number" },
+        "predictedSpread": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "regionId", "waterSource", "contaminationType", "patientCount", "severity"]
+    },
+    "Patient": {
+      "title": "Patient",
+      "description": "Synthetic demonstration patient record mapped to FHIR Patient/Condition",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "regionId": { "type": "string", "maxLength": 64 },
+        "outbreakId": { "type": "string", "maxLength": 64 },
+        "ageGroup": { "type": "string", "maxLength": 32 },
+        "symptoms": { "type": "string", "maxLength": 256 },
+        "severity": { "type": "string", "maxLength": 32 },
+        "status": { "type": "string", "maxLength": 32 },
+        "reportedDate": { "type": "string" },
+        "waterExposure": { "type": "string", "maxLength": 128 },
+        "primaryWaterSource": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "regionId", "ageGroup", "severity"]
+    },
+    "WaterQuality": {
+      "title": "WaterQuality",
+      "description": "Synthetic water quality laboratory test observation",
+      "type": "object",
+      "properties": {
+        "sampleId": { "type": "string", "maxLength": 64 },
+        "regionId": { "type": "string", "maxLength": 64 },
+        "sampleDate": { "type": "string" },
+        "sampleTime": { "type": "string" },
+        "pH": { "type": "number" },
+        "turbidity": { "type": "number" },
+        "coliformCount": { "type": "number" },
+        "bacteriaLevel": { "type": "string", "maxLength": 64 },
+        "contaminationType": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "maxLength": 32 },
+        "testedBy": { "type": "string", "maxLength": 128 },
+        "notes": { "type": "string", "maxLength": 512 }
+      },
+      "required": ["sampleId", "regionId", "sampleDate", "pH", "status"]
+    },
+    "FhirResource": {
+      "title": "FhirResource",
+      "description": "Standardized FHIR R4 JSON resource with provenance and validation status",
+      "type": "object",
+      "properties": {
+        "resourceType": { "type": "string", "maxLength": 64 },
+        "resourceId": { "type": "string", "maxLength": 64 },
+        "sourceSystem": { "type": "string", "maxLength": 128 },
+        "validationStatus": { "type": "string", "enum": ["valid", "warning", "error", "pending"] },
+        "validationMessages": { "type": "string", "maxLength": 2048 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["resourceType", "resourceId", "validationStatus"]
+    },
+    "Alert": {
+      "title": "Alert",
+      "description": "Real-time One Health alert for outbreaks, abnormal water tests, and FHIR validation events",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 128 },
+        "regionId": { "type": "string", "maxLength": 64 },
+        "regionName": { "type": "string", "maxLength": 128 },
+        "level": { "type": "string", "enum": ["critical", "high", "medium", "info"] },
+        "message": { "type": "string", "maxLength": 512 },
+        "category": { "type": "string", "enum": ["outbreak", "water_quality", "fhir_validation", "integration"] },
+        "timestamp": { "type": "string" },
+        "resolved": { "type": "boolean" }
+      },
+      "required": ["id", "title", "level", "message", "category", "resolved"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles and RBAC role assignments"
+    },
+    "/regions/{regionId}": {
+      "schema": { "$ref": "#/entities/Region" },
+      "description": "Monitored 3D global regions"
+    },
+    "/outbreaks/{outbreakId}": {
+      "schema": { "$ref": "#/entities/Outbreak" },
+      "description": "Synthetic outbreak events and water correlation datasets"
+    },
+    "/patients/{patientId}": {
+      "schema": { "$ref": "#/entities/Patient" },
+      "description": "Synthetic patient records"
+    },
+    "/waterQuality/{sampleId}": {
+      "schema": { "$ref": "#/entities/WaterQuality" },
+      "description": "Laboratory water sample tests"
+    },
+    "/fhirResources/{resourceId}": {
+      "schema": { "$ref": "#/entities/FhirResource" },
+      "description": "Standardized FHIR R4 resources"
+    },
+    "/alerts/{alertId}": {
+      "schema": { "$ref": "#/entities/Alert" },
+      "description": "One Health alerts and early warnings"
+    }
+  }
+}

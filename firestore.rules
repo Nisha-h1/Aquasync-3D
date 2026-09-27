@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Regions: Publicly readable for telemetry visualization; writable by admin or health authority
+    match /regions/{regionId} {
+      allow read: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(regionId);
+    }
+
+    // Outbreaks: Synthetic outbreak data
+    match /outbreaks/{outbreakId} {
+      allow read: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(outbreakId);
+    }
+
+    // Patients: Synthetic demonstration patient cases
+    match /patients/{patientId} {
+      allow read: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(patientId);
+    }
+
+    // Water Quality: Water observations
+    match /waterQuality/{sampleId} {
+      allow read: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(sampleId);
+    }
+
+    // FHIR Resources: Standardized FHIR bundles & observations
+    match /fhirResources/{resourceId} {
+      allow read: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(resourceId);
+    }
+
+    // Alerts: Operational notices
+    match /alerts/{alertId} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && isValidId(alertId);
+      allow delete: if isSignedIn() && isValidId(alertId);
+    }
+
+    // User profiles: Only self can read/write private profile
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId);
+      allow create, update: if isSignedIn() && (request.auth.uid == userId) && isValidId(userId);
+      allow delete: if false;
+    }
+  }
+}

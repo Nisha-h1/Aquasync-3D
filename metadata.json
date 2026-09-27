@@ -1,0 +1,6 @@
+{
+  "name": "AquaSync 3D — Water Health Intelligence",
+  "description": "From Water Sources to Patient Care — One Health Intelligence in Real Time. AI-powered FHIR standardization connecting fragmented water, environmental and healthcare data.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
