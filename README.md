@@ -126,6 +126,7 @@ https://aquasync-waterhealth.ai.studio
 https://youtu.be/XCWjafefQt0?si=lmW-vBtw5fEvOlo7
 
 💻 GitHub Repository:
+https://github.com/Nisha-h1/Aquasync-3D.git
 
 
 ⸻
