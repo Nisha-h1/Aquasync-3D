@@ -120,7 +120,7 @@ The platform includes a voice-enabled assistant designed to support interaction 
 📋 Live Demo
 
 🌐 Live Website:
-https://aquasync-waterhealth.ai.studio
+https://aquasync-3-d.vercel.app
 
 🎥 Demo Video:
 https://youtu.be/XCWjafefQt0?si=lmW-vBtw5fEvOlo7
